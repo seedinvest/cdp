@@ -1,5 +1,5 @@
 {
-  "name": "seedinvest",
+  "name": "cdp-company-to-segment",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -11,7 +11,6 @@
   "dependencies": {
     "analytics-node": "^6.0.0",
     "async": "^3.2.2",
-    "csvtojson": "^2.0.10",
-    "objects-node": "^1.0.0"
+    "csvtojson": "^2.0.10"
   }
 }

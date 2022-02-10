@@ -1,2 +1,2 @@
 glue-etl/target
-lambda/node_modules
+**/node_modules

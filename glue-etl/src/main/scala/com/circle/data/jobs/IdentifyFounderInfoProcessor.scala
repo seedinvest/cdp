@@ -51,7 +51,7 @@ object IdentifyFounderInfoProcessor
 
     val result = getFounderInfo(applicationsData, profileData, authData, identityData)
 
-    val timestampKey = LocalDateTime.now.format(DateTimeFormatter.ofPattern("YYYY/MM/dd_HHmmss"))
+    val timestampKey = LocalDateTime.now.format(DateTimeFormatter.ofPattern("YYYY_MM_dd_HHmmss"))
     val outputPath = s"$outputFileLocation/$timestampKey"
 
     result

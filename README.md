@@ -12,3 +12,17 @@ mvn clean install
 # Manual steps to deply Lambda
 ```
 ```
+
+# Glue Destination
+## Development
+```
+# company s3 destination
+s3://aws-glue-segment-dev-301027959319-us-east-1/cdp/segment/group/
+
+# deploy
+cd lambda/company
+rm company.zip
+zip -r company.zip .
+aws lambda update-function-code --function-name cdp-company-segment-dev --zip-file fileb://company.zip
+```
+

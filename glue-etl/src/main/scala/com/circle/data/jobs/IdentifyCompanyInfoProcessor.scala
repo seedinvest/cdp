@@ -41,7 +41,7 @@ object IdentifyCompanyInfoProcessor
 
     val result = getCompanyInfo(companyData)
 
-    val timestampKey = LocalDateTime.now.format(DateTimeFormatter.ofPattern("YYYY/MM/dd_HHmmss"))
+    val timestampKey = LocalDateTime.now.format(DateTimeFormatter.ofPattern("YYYY_MM_dd_HHmmss"))
     val outputPath = s"$outputFileLocation/$timestampKey"
 
     result
@@ -61,7 +61,7 @@ object IdentifyCompanyInfoProcessor
    *
    * Example Presto Query:
    * SELECT
-   *  company.entity_ptr_id AS "traits.id"
+   *  company.entity_ptr_id AS "groupId"
    *  , company.legal_name AS "traits.name"
    *  , company.phone_number AS "traits.phone"
    *  , company.company_entity_description AS "traits.description"
@@ -73,11 +73,11 @@ object IdentifyCompanyInfoProcessor
    */
   def getCompanyInfo(companyData: DataFrame): DataFrame = {
     val selectCols = Array(
-      "company.entity_ptr_id as `traits.id`",
+      "company.entity_ptr_id as `groupId`",
       "company.legal_name AS `traits.name`",
       "company.phone_number AS `traits.phone`",
       "company.company_entity_description as `traits.description`"
     )
-    companyData.as("company").selectExpr(selectCols: _*)
+    companyData.as("company").selectExpr(selectCols: _*).where("company.legal_name IS NOT NULL")
   }
 }
