@@ -26,3 +26,10 @@ zip -r company.zip .
 aws lambda update-function-code --function-name cdp-company-segment-dev --zip-file fileb://company.zip
 ```
 
+
+# Permissions
+## Lambda
+* Read s3://aws-glue-segment-dev-301027959319-us-east-1/** (SegmentLambdaExecute-DEV)
+
+## Glue
+* Write s3://aws-glue-segment-dev-301027959319-us-east-1
