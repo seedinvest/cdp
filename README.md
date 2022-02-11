@@ -33,3 +33,17 @@ cd lamba/company
 
 ## Glue
 * Write s3://aws-glue-segment-dev-301027959319-us-east-1
+
+
+# Paths and locations
+## Scala OUTPUT and Lambda INPUT development s3 buckets
+* s3://aws-glue-segment-dev-301027959319-us-east-1
+
+## Glue Jars (dependencies for the Scala jobs are included in this jar(s))
+* s3://aws-glue-jars-301027959319-us-east-1
+
+## Glue Scripts (scala jobs must link to a script on s3. I don't understand this yet)
+* s3://aws-glue-scripts-301027959319-us-east-1
+
+## Glue Scripts (scala jobs must link to a script on s3. I don't understand this yet)
+* s3://aws-glue-scripts-301027959319-us-east-1
