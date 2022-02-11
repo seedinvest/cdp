@@ -1,7 +1,13 @@
-# cdp
+# CDP
 Customer Data Platform
 
-# Deps
+# External Tools
+* segment
+* hubspot
+* aws glue
+* aws lambda
+
+# Build Dependencies
 * A configured aws cli
 * Java 8 / Maven
 * Node 14
@@ -34,9 +40,8 @@ cd lamba/company
 ## Glue
 * Write s3://aws-glue-segment-dev-301027959319-us-east-1
 
-
-# Paths and locations
-## Scala OUTPUT and Lambda INPUT development s3 buckets
+# Development Paths and locations
+## Scala OUTPUT and Lambda INPUT s3 buckets
 * s3://aws-glue-segment-dev-301027959319-us-east-1
 
 ## Glue Jars (dependencies for the Scala jobs are included in this jar(s))
@@ -45,8 +50,7 @@ cd lamba/company
 ## Glue Scripts (scala jobs must link to a script on s3. I don't understand this yet)
 * s3://aws-glue-scripts-301027959319-us-east-1
 
-## Glue Scripts (scala jobs must link to a script on s3. I don't understand this yet)
-* s3://aws-glue-scripts-301027959319-us-east-1
-
 # Schedules
-## TBD
+* Founders: Glue job runs 10pm nightly
+* Companies: Glue job runs at 11pm nightly
+
