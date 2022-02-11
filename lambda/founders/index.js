@@ -51,14 +51,14 @@ exports.handler = function (event, context, callback) {
     },
     function upload(formattedResults, next) {
       console.log('Uploading', formattedResults);
-      formattedResults.map(function (identifyObject) {
-        // More in the docs here: https://segment.com/docs/connections/spec/identify/
-        analytics.identify(identifyObject);
-      });
+      // formattedResults.map(function (identifyObject) {
+      //   // More in the docs here: https://segment.com/docs/connections/spec/identify/
+      //   analytics.identify(identifyObject);
+      // });
 
-      analytics.flush(function (err, batch) {
-        next(err, "Done");
-      });
+      // analytics.flush(function (err, batch) {
+      //   next(err, "Done");
+      // });
     }
   ], function (err) {
     // Some pretty basic error handling

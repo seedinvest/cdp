@@ -47,3 +47,6 @@ cd lamba/company
 
 ## Glue Scripts (scala jobs must link to a script on s3. I don't understand this yet)
 * s3://aws-glue-scripts-301027959319-us-east-1
+
+# Schedules
+## TBD
