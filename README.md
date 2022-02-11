@@ -54,3 +54,8 @@ cd lamba/company
 * Founders: Glue job runs 10pm nightly
 * Companies: Glue job runs at 11pm nightly
 
+# Cleanup / audit / todo
+* cleanup IAM
+* dev vs prod setup
+* ci/cd
+* audit/data integ
