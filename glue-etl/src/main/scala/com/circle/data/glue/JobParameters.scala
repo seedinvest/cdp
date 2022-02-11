@@ -18,5 +18,15 @@ trait JobParameters {
 
   val SourceGlueTable5Param = "SOURCE_GLUE_TABLE5"
 
+  val SourceGlueTable6Param = "SOURCE_GLUE_TABLE6"
+
+  val SourceGlueTable7Param = "SOURCE_GLUE_TABLE7"
+
+  val SourceGlueTable8Param = "SOURCE_GLUE_TABLE8"
+
+  val SourceGlueTable9Param = "SOURCE_GLUE_TABLE9"
+  
+  val SourceGlueTable10Param = "SOURCE_GLUE_TABLE10"
+
   val OutputLocationParam = "OUTPUT_LOCATION"
 }

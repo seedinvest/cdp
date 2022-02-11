@@ -44,11 +44,6 @@ object IdentifyFounderInfoProcessor
     val authData = getDataFrameForGlueCatalog(snapshotDatabase, snapshotTable3)
     val identityData = getDataFrameForGlueCatalog(snapshotDatabase, snapshotTable4)
 
-    profileData.printSchema()
-    applicationsData.printSchema()
-    authData.printSchema()
-    identityData.printSchema()
-
     val result = getFounderInfo(applicationsData, profileData, authData, identityData)
 
     val timestampKey = LocalDateTime.now.format(DateTimeFormatter.ofPattern("YYYY/MM/dd_HHmmss"))
@@ -101,8 +96,8 @@ object IdentifyFounderInfoProcessor
       "auth.email AS `traits.email`", "ui.phone_number AS `traits.phone`",
       "profile.email_confirmed AS `traits.email_confirmed`"
     )
-    apps = apps.as("applications").join(profileData.as("profile"),
-      col("profile.entity_ptr_id") === col("applications.main_poc_id"))
+    apps = apps.as("applications")
+      .join(profileData.as("profile"), col("profile.entity_ptr_id") === col("applications.main_poc_id"))
       .join(authData.as("auth"), col("auth.id") === col ("profile.user_id"))
       .join(identityData.as("ui"), col("ui.userprofile_id") === col("profile.entity_ptr_id"))
     apps.selectExpr(selectCols: _*)
