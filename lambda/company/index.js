@@ -51,15 +51,16 @@ exports.handler = function (event, context, callback) {
         });
     },
     function upload(formattedResults, next) {
-      console.log('Uploading', formattedResults);
-      // formattedResults.map(function (groupObject) {
-      //   // More in the docs here: https://segment.com/docs/connections/spec/group/
-      //   analytics.group(groupObject);
-      // });
+      console.log('Uploading company', formattedResults);
+      console.log('company count', formattedResults.length);
+      formattedResults.map(function (groupObject) {
+        // More in the docs here: https://segment.com/docs/connections/spec/group/
+        analytics.group(groupObject);
+      });
 
-      // analytics.flush(function (err, batch) {
-      //   next(err, "Done");
-      // });
+      analytics.flush(function (err, batch) {
+        next(err, "Done");
+      });
     }
   ], function (err) {
     // Some pretty basic error handling
