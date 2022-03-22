@@ -31,7 +31,7 @@ const analytics = new Analytics(process.env.write_key);
 
 function transform(obj) {
   if (obj.timestamp) {
-    obj.timestamp = Date.parse(obj.timestamp);
+    obj.timestamp = new Date(obj.timestamp);
   }
   return obj;
 };
