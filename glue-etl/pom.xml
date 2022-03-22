@@ -24,10 +24,16 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <spark.version>2.4.3</spark.version>
         <glue.version>1.0.0</glue.version>
-        <scala.compat.version>2.11</scala.compat.version>
         <junit.version>4.12</junit.version>
+        <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
+        <maven-shade-plugin.version>3.2.4</maven-shade-plugin.version>
+        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+        <netty-all.version>4.1.22.Final</netty-all.version>
+        <scala-library.version>2.11.1</scala-library.version>
+        <scala-maven-plugin.version>3.4.6</scala-maven-plugin.version>
+        <scala.compat.version>2.11</scala.compat.version>
+        <spark.version>2.4.3</spark.version>
     </properties>
 
     <repositories>
@@ -42,7 +48,7 @@
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
-            <version>2.11.1</version>
+            <version>${scala-library.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -64,7 +70,7 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
-            <version>4.1.22.Final</version>
+            <version>${netty-all.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -105,6 +111,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
                 <configuration>
                     <!-- Force tests to run in UTC -->
                     <argLine>-Duser.timezone=UTC</argLine>
@@ -116,7 +123,7 @@
             <plugin>
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>
-                <version>3.4.6</version>
+                <version>${scala-maven-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>scala-compile-first</id>
@@ -138,7 +145,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.4</version>
+                <version>${maven-shade-plugin.version}</version>
                 <configuration>
                     <createDependencyReducedPom>true</createDependencyReducedPom>
                     <filters>
@@ -188,7 +195,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.0</version>
+                <version>${maven-compiler-plugin.version}</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
