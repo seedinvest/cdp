@@ -49,17 +49,17 @@ exports.handler = function (event, context, callback) {
     .fromStream(s3.getObject(params).createReadStream())
     .subscribe((json) => {
       console.log(transform(json));
-      analytics.identify(transform(json));
+      // analytics.identify(transform(json));
     }, (err) => {
       console.error(err);
     }, async () => {
-      await analytics.flush((err, batch) => {
-        if (!err) {
-          console.log(`Successfully downloaded ${srcBucket}/${srcFileName} and uploaded to Segment!`);
-          callback(null, "Success!");
-        } else {
-          console.error(`Unable to download ${srcBucket}/${srcFileName} and uploaded to Segment due to ${err}`);
-        }
-      });
+      // await analytics.flush((err, batch) => {
+      //   if (!err) {
+      //     console.log(`Successfully downloaded ${srcBucket}/${srcFileName} and uploaded to Segment!`);
+      //     callback(null, "Success!");
+      //   } else {
+      //     console.error(`Unable to download ${srcBucket}/${srcFileName} and uploaded to Segment due to ${err}`);
+      //   }
+      // });
     });
 };
