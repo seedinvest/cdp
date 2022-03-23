@@ -24,14 +24,16 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <glue.version>1.0.0</glue.version>
         <junit.version>4.12</junit.version>
-        <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
         <maven-shade-plugin.version>3.2.4</maven-shade-plugin.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
-        <netty-all.version>4.1.22.Final</netty-all.version>
+        <netty-all.version>4.1.75.Final</netty-all.version>
         <scala-library.version>2.11.1</scala-library.version>
-        <scala-maven-plugin.version>3.4.6</scala-maven-plugin.version>
+        <scala-maven-plugin.version>4.5.6</scala-maven-plugin.version>
         <scala.compat.version>2.11</scala.compat.version>
         <spark.version>2.4.3</spark.version>
     </properties>
@@ -117,6 +119,9 @@
                     <argLine>-Duser.timezone=UTC</argLine>
                     <!-- Direct derby.log to target dir for spark sql -->
                     <argLine>-Dderby.system.home=${project.basedir}/target/derby</argLine>
+                    <includes>
+                        <include>**/*Test.*</include>
+                    </includes>
                 </configuration>
             </plugin>
 

@@ -13,7 +13,7 @@ package com.circle.data.glue
  * prohibited without the express written permission of Circle Internet Financial
  * Trading Company Limited.
  */
-import com.circle.data.jobs.{IdentifyCompanyInfoProcessor, IdentifyFounderInfoProcessor}
+import com.circle.data.utils.{QueryBase}
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 import org.junit.runner.RunWith
@@ -21,17 +21,14 @@ import org.scalatest.junit.JUnitRunner
 import utils.ETLSuiteBase
 
 @RunWith(classOf[JUnitRunner])
-class IdentifyFounderInfoProcessorTest
+class BasicUserInfoProcessorTest
   extends ETLSuiteBase {
-
-  val applSchema = List(
-    StructField("main_poc_id", IntegerType, nullable = true)
-  )
 
   val profileSchema = List(
     StructField("entity_ptr_id", IntegerType, nullable = true),
     StructField("user_id", IntegerType, nullable = true),
-    StructField("email_confirmed", BooleanType, nullable = true)
+    StructField("email_confirmed", BooleanType, nullable = true),
+    StructField("date_joined", DateType, nullable = true)
   )
 
   val authSchema = List(
@@ -48,16 +45,10 @@ class IdentifyFounderInfoProcessorTest
     StructField("phone_number", StringType, nullable = true)
   )
 
-  val applData = Seq(
-    Row(211921),
-    Row(469225),
-    Row(431253)
-  )
-
   val profileData = Seq(
-    Row(211921, 193663, true),
-    Row(469225, 412193, false),
-    Row(431253, 450024, true)
+    Row(211921, 193663, true, null),
+    Row(469225, 412193, false, null),
+    Row(431253, 450024, true, null)
   )
 
   val authData = Seq(
@@ -71,12 +62,7 @@ class IdentifyFounderInfoProcessorTest
     Row(431253, null, null, "2345670987")
   )
 
-
   test("Test identify company info") {
-    val appDF = spark.createDataFrame(
-      sparkContext.parallelize(applData),
-      StructType(applSchema)
-    )
 
     val profileDF = spark.createDataFrame(
       sparkContext.parallelize(profileData),
@@ -93,7 +79,7 @@ class IdentifyFounderInfoProcessorTest
       StructType(uiSchema)
     )
 
-    val results = IdentifyFounderInfoProcessor.getFounderInfo(appDF, profileDF, authDF, uiDF)
+    val results = QueryBase.getBasicUserData(authDF, profileDF, uiDF)
 
     assert(results.count() == 3)
 
