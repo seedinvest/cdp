@@ -6,6 +6,7 @@ import com.circle.data.glue.{DataLoader, GlueJob}
 import com.circle.data.utils.Logging
 import com.circle.data.utils.QueryBase._
 import org.apache.spark.SparkContext
+import org.apache.spark.sql.functions.col
 import org.apache.spark.sql.{DataFrame, SQLContext, SaveMode, SparkSession}
 
 import java.time.LocalDateTime

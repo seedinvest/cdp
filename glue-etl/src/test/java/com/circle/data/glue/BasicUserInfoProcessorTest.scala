@@ -13,7 +13,7 @@ package com.circle.data.glue
  * prohibited without the express written permission of Circle Internet Financial
  * Trading Company Limited.
  */
-import com.circle.data.utils.{QueryBase}
+import com.circle.data.utils.QueryBase._
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 import org.junit.runner.RunWith
@@ -62,7 +62,7 @@ class BasicUserInfoProcessorTest
     Row(431253, null, null, "2345670987")
   )
 
-  test("Test identify company info") {
+  test("Test basic user info") {
 
     val profileDF = spark.createDataFrame(
       sparkContext.parallelize(profileData),
@@ -79,7 +79,7 @@ class BasicUserInfoProcessorTest
       StructType(uiSchema)
     )
 
-    val results = QueryBase.getBasicUserData(authDF, profileDF, uiDF)
+    val results = getBasicUserData(authDF, profileDF, uiDF)
 
     assert(results.count() == 3)
 

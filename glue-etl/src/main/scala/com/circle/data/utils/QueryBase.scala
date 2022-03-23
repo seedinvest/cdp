@@ -25,12 +25,19 @@ object QueryBase {
    */
 
   def getBasicUserData(authData: DataFrame, userProfileData: DataFrame, userIdentityData: DataFrame): DataFrame = {
-    val selectCols = Array("auth.first_name")
+    val selectCols = Array(
+      "profile.user_id AS `userId`",
+      "COALESCE(ui.first_name, auth.first_name) AS `traits.first_name`",
+      "COALESCE(ui.last_name, auth.last_name) AS `traits.last_name`",
+      "auth.email AS `traits.email`",
+      "ui.phone_number AS `traits.phone`",
+      "profile.email_confirmed AS `traits.email_confirmed`",
+      "profile.date_joined AS `timestamp`"
+    )
 
-    authData.as("auth").selectExpr(selectCols: _*)
-      // .join(userProfileData.as("profile"), col("user_id") === col("id"))
-      // .join(userIdentityData.as("ui"), col("ui.userprofile_id") === col("profile.entity_ptr_id")
-
-    authData
+    authData.as("auth")
+      .join(userProfileData.as("profile"), col("profile.user_id") === col("auth.id"))
+      .join(userIdentityData.as("ui"), col("ui.userprofile_id") === col("profile.entity_ptr_id"))
+      .selectExpr(selectCols: _*)
   }
 }
