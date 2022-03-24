@@ -35,7 +35,8 @@ class BasicUserInfoProcessorTest
     StructField("id", IntegerType, nullable = true),
     StructField("first_name", StringType, nullable = true),
     StructField("last_name", StringType, nullable = true),
-    StructField("email", StringType, nullable = true)
+    StructField("email", StringType, nullable = true),
+    StructField("last_login", DateType, nullable = true)
   )
 
   val uiSchema = List(
@@ -52,10 +53,11 @@ class BasicUserInfoProcessorTest
   )
 
   val authData = Seq(
-    Row(193663, "Rodney", "Smith", "rodne@sor.com"),
-    Row(412193, "Charles", "Yeo", "char@atotech.com"),
-    Row(450024, "Nicholas", "Lu", "nick@ged.com")
+    Row(193663, "Rodney", "Smith", "rodne@sor.com", null),
+    Row(412193, "Charles", "Yeo", "char@atotech.com", null),
+    Row(450024, "Nicholas", "Lu", "nick@ged.com", null)
   )
+  
   val uiData = Seq(
     Row(211921, null, null, null),
     Row(469225, null, null, "1234567891"),
@@ -79,7 +81,7 @@ class BasicUserInfoProcessorTest
       StructType(uiSchema)
     )
 
-    val results = getBasicUserData(authDF, profileDF, uiDF)
+    val results = getBasicUserData(authDF, profileDF, uiDF, false)
 
     assert(results.count() == 3)
 

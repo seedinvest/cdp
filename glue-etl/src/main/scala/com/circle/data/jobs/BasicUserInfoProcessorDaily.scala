@@ -15,7 +15,7 @@ import java.time.format.DateTimeFormatter
 /**
  * Processor for getting SeedInvest user who signed up.
  */
-object BasicUserInfoProcessor
+object BasicUserInfoProcessorDaily
   extends GlueJob
     with DataLoader
     with Logging {
@@ -39,7 +39,7 @@ object BasicUserInfoProcessor
     val userProfileData = getDataFrameForGlueCatalog(snapshotDatabase, "public_seedinvest_user_userprofile")
     val userIdentityData = getDataFrameForGlueCatalog(snapshotDatabase, "public_seedinvest_user_identity")
 
-    val result = getBasicUserData(authData, userProfileData, userIdentityData, false)
+    val result = getBasicUserData(authData, userProfileData, userIdentityData, true)
 
     val timestampKey = LocalDateTime.now.format(DateTimeFormatter.ofPattern("YYYY/MM/dd_HHmmss"))
     val outputPath = s"$outputFileLocation/$timestampKey"
