@@ -6,16 +6,18 @@ import com.circle.data.glue.{DataLoader, GlueJob}
 import com.circle.data.utils.Logging
 import com.circle.data.utils.QueryBase._
 import org.apache.spark.SparkContext
-import org.apache.spark.sql.functions.col
+import org.apache.spark.sql.functions._
 import org.apache.spark.sql.{DataFrame, SQLContext, SaveMode, SparkSession}
+import org.apache.spark.sql.expressions.Window
 
 import java.time.LocalDateTime
+import java.util.Date
 import java.time.format.DateTimeFormatter
 
 /**
  * Processor for getting SeedInvest user who signed up.
  */
-object BasicUserInfoProcessorDaily
+object InvestorInfoProcessor
   extends GlueJob
     with DataLoader
     with Logging {
@@ -38,13 +40,15 @@ object BasicUserInfoProcessorDaily
     val authData = getDataFrameForGlueCatalog(snapshotDatabase,  "public_auth_user")
     val userProfileData = getDataFrameForGlueCatalog(snapshotDatabase, "public_seedinvest_user_userprofile")
     val userIdentityData = getDataFrameForGlueCatalog(snapshotDatabase, "public_seedinvest_user_identity")
+    val investmentData = getDataFrameForGlueCatalog(snapshotDatabase, "public_investing_investment")
 
-    val result = getBasicUserData(authData, userProfileData, userIdentityData, true)
+    val result = getInvestorData(sparkSession, authData, userProfileData, userIdentityData, investmentData)
 
     val timestampKey = LocalDateTime.now.format(DateTimeFormatter.ofPattern("YYYY/MM/dd_HHmmss"))
     val outputPath = s"$outputFileLocation/$timestampKey"
 
     result
+      .coalesce(1)
       .write
       .mode(SaveMode.Overwrite)
       .option("header", value = true)
@@ -53,5 +57,26 @@ object BasicUserInfoProcessorDaily
       .csv(outputPath)
 
     Job.commit()
+  }
+
+  def getInvestorData(sparkSession: SparkSession, authData: DataFrame, userProfileData: DataFrame, userIdentityData: DataFrame, investmentData: DataFrame): DataFrame = {
+
+    val selectCols = Array(
+      "userprofile_id",
+      "updated_date",
+      "total_invested"
+    )
+
+    var result = investmentData
+      .groupBy(col("userprofile_id"))
+      .agg(
+        max("modified_at").as("updated_date"),
+        sum("amount").as("total_invested")
+      )
+      .selectExpr(selectCols: _*)
+
+    result = result.filter(col("userprofile_id") === "1571")
+
+    result
   }
 }
