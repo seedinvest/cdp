@@ -1,5 +1,5 @@
 {
-  "name": "ro-investorcrm-prod-db-to-s3",
+  "name": "investorcrm-db-prod-db-to-s3",
   "version": "0.1.0",
   "bin": {
     "cdk": "bin/cdk.js"
