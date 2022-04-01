@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter
 /**
  * Processor for getting SeedInvest user who signed up.
  */
-object InvestorInfoProcessor
+object InvestorActionProcessor
   extends GlueJob
     with DataLoader
     with Logging {
@@ -37,10 +37,9 @@ object InvestorInfoProcessor
     val snapshotDatabase = options(SourceGlueDatabaseParam)
     val outputFileLocation = options(OutputLocationParam)
 
-    val authData = getDataFrameForGlueCatalog(snapshotDatabase,  "public_auth_user")
-    val userProfileData = getDataFrameForGlueCatalog(snapshotDatabase, "public_seedinvest_user_userprofile")
-    val userIdentityData = getDataFrameForGlueCatalog(snapshotDatabase, "public_seedinvest_user_identity")
-    val investmentData = getDataFrameForGlueCatalog(snapshotDatabase, "public_investing_investment")
+    val userProfileData = getDataFrameForGlueCatalog(snapshotDatabase, "public_crm_user_crmuserprofile")
+    val userActivityData = getDataFrameForGlueCatalog(snapshotDatabase, "public_crm_user_useractivity")
+    val userActionData = getDataFrameForGlueCatalog(snapshotDatabase, "public_crm_user_eventaction")
 
     val result = getInvestorData(sparkSession, authData, userProfileData, userIdentityData, investmentData)
 

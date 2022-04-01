@@ -8,6 +8,8 @@ import {Key} from "@aws-cdk/aws-kms";
 import {CfnEventSubscription} from "@aws-cdk/aws-rds";
 import {BlockPublicAccess, Bucket} from "@aws-cdk/aws-s3";
 import {Topic} from "@aws-cdk/aws-sns";
+import {Rule, Schedule} from "@aws-cdk/aws-events";
+import {LambdaFunction} from "@aws-cdk/aws-events-targets";
 
 export enum RdsEventId {
   /**

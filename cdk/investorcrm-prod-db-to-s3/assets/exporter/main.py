@@ -41,9 +41,12 @@ def handler(event, context):
     ):
         export_task_identifier = event["Records"][0]["Sns"]["MessageId"]
         account_id = boto3.client("sts").get_caller_identity()["Account"]
+        logger.info(message)
+        logger.info(message["Source ID"][19:29])
+        logger.info("dt" + (message["Source ID"][19:29]).replace("--", "-"))
         response = boto3.client("rds").start_export_task(
             ExportTaskIdentifier=(
-                "dt-" + (message["Source ID"][23:33]).replace("--", "-")
+                "dt-" + (message["Source ID"][19:29]).replace("--", "-")
             ),
             SourceArn=f"arn:aws:rds:{os.environ['AWS_REGION']}:{account_id}:{os.environ['DB_SNAPSHOT_TYPE']}:{message['Source ID']}",
             S3BucketName=os.environ["SNAPSHOT_BUCKET_NAME"],

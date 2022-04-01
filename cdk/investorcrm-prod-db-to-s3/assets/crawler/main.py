@@ -19,7 +19,7 @@ def handler(event, context):
     logger.info(f'Date: {date}')
 
     bucket_name = os.environ['S3_BUCKET_NAME']
-    old_folder = f'ro-investorcrm-prod-db/dt-{date}/'
+    old_folder = f'investorcrm-db/dt-{date}/'
     new_folder = 'latest/'
 
     s3 = boto3.resource('s3')
