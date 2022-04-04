@@ -30,20 +30,31 @@ def handler(event, context):
         )
         return
 
-    logger.debug("EVENT INFO:")
-    logger.debug(json.dumps(event))
-
     message = json.loads(event["Records"][0]["Sns"]["Message"])
+
+    logger.info(message["Event ID"])
+    logger.info(message["Source ID"])
 
     if message["Event ID"].endswith(os.environ["RDS_EVENT_ID"]) and re.match(
         "^rds:" + os.environ["DB_NAME"] + "-\d{4}-\d{2}-\d{2}-\d{2}-\d{2}$",
         message["Source ID"],
     ):
-        export_task_identifier = event["Records"][0]["Sns"]["MessageId"]
         account_id = boto3.client("sts").get_caller_identity()["Account"]
         logger.info(message)
         logger.info(message["Source ID"][19:29])
-        logger.info("dt" + (message["Source ID"][19:29]).replace("--", "-"))
+        logger.info("dt-" + (message["Source ID"][19:29]).replace("--", "-"))
+
+        s3 = boto3.resource('s3')
+        bucket_name = os.environ['SNAPSHOT_BUCKET_NAME']
+        bucket = s3.Bucket(bucket_name)
+        folder = os.environ["DB_NAME"]
+
+        logger.info(bucket)
+        logger.info(folder)
+
+        # Clear the s3 bucket every time for glue's sake..
+        bucket.objects.filter(Prefix=folder).delete()
+
         response = boto3.client("rds").start_export_task(
             ExportTaskIdentifier=(
                 "dt-" + os.environ["DB_NAME"] + "-" + (message["Source ID"][19:29]).replace("--", "-")
@@ -54,6 +65,7 @@ def handler(event, context):
             KmsKeyId=os.environ["SNAPSHOT_TASK_KEY"],
             S3Prefix=f'{os.environ["DB_NAME"]}',
         )
+
         response["SnapshotTime"] = str(response["SnapshotTime"])
 
         logger.info("Snapshot export task started")

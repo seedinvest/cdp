@@ -37,23 +37,23 @@ object InvestorActionProcessor
     val snapshotDatabase = options(SourceGlueDatabaseParam)
     val outputFileLocation = options(OutputLocationParam)
 
-    val userProfileData = getDataFrameForGlueCatalog(snapshotDatabase, "public_crm_user_crmuserprofile")
-    val userActivityData = getDataFrameForGlueCatalog(snapshotDatabase, "public_crm_user_useractivity")
-    val userActionData = getDataFrameForGlueCatalog(snapshotDatabase, "public_crm_user_eventaction")
+    // val userProfileData = getDataFrameForGlueCatalog(snapshotDatabase, "public_crm_user_crmuserprofile")
+    // val userActivityData = getDataFrameForGlueCatalog(snapshotDatabase, "public_crm_user_useractivity")
+    // val userActionData = getDataFrameForGlueCatalog(snapshotDatabase, "public_crm_user_eventaction")
 
-    val result = getInvestorData(sparkSession, authData, userProfileData, userIdentityData, investmentData)
+    // val result = getInvestorData(sparkSession, authData, userProfileData, userIdentityData, investmentData)
 
-    val timestampKey = LocalDateTime.now.format(DateTimeFormatter.ofPattern("YYYY/MM/dd_HHmmss"))
-    val outputPath = s"$outputFileLocation/$timestampKey"
+    // val timestampKey = LocalDateTime.now.format(DateTimeFormatter.ofPattern("YYYY/MM/dd_HHmmss"))
+    // val outputPath = s"$outputFileLocation/$timestampKey"
 
-    result
-      .coalesce(1)
-      .write
-      .mode(SaveMode.Overwrite)
-      .option("header", value = true)
-      // Use escape to sets a single character used for escaping quotes inside an already quoted value.
-      .option("escape", "\"")
-      .csv(outputPath)
+    // result
+    //   .coalesce(1)
+    //   .write
+    //   .mode(SaveMode.Overwrite)
+    //   .option("header", value = true)
+    //   // Use escape to sets a single character used for escaping quotes inside an already quoted value.
+    //   .option("escape", "\"")
+    //   .csv(outputPath)
 
     Job.commit()
   }
