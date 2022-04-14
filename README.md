@@ -18,7 +18,9 @@ Customer Data Platform
 cd glue-etl
 mvn clean install
 # Manually copy target/cdp-x.x-shaded.jar => s3://aws-glue-jars-301027959319-us-east-1
-# Manually upload scala job file to s3://aws-glue-scripts-301027959319-us-east-1
+aws s3 cp ./target/cdp-1.0-SNAPSHOT-shaded.jar s3://aws-glue-jars-301027959319-us-east-1/ 
+# Manually upload scala source code file to s3://aws-glue-scripts-301027959319-us-east-1
+aws s3 cp ./src/main/scala/com/circle/data/jobs/InvestorActionProcessor.scala s3://aws-glue-assets-301027959319-us-east-1/scripts/
 ```
 
 # Build and deploy lambda
