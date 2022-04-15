@@ -53,7 +53,7 @@ object QueryBase {
   }
 
   /**
-   * Get invester data
+   * Get invester action data
    * SELECT
        profile.si_userprofile_id, 
        action.name,
@@ -80,5 +80,4 @@ object QueryBase {
 
     result
   }
-
 }
