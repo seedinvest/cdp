@@ -33,6 +33,8 @@ function transform(obj) {
   if (obj.timestamp) {
     obj.timestamp = new Date(obj.timestamp);
   }
+
+  obj.event = obj.actionName;
   return obj;
 };
 
@@ -48,8 +50,9 @@ exports.handler = function (event, context, callback) {
   csv()
     .fromStream(s3.getObject(params).createReadStream())
     .subscribe((json) => {
-      console.log(transform(json));
-      analytics.track(transform(json));
+      const event = transform(json);
+      console.log(event);
+      analytics.track(event);
     }, (err) => {
       console.error(err);
     }, async () => {
