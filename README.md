@@ -24,12 +24,9 @@ mvn clean install
 # Build and deploy lambda
 ## Development
 ```
-# founders
-cd lamba/founders
-./release-dev.sh
-
-# company
-cd lamba/company
+# deploy the lambda to import investor basic information
+cd lamba/basic
+npm install
 ./release-dev.sh
 ```
 
