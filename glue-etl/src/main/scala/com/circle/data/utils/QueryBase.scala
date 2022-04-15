@@ -51,4 +51,33 @@ object QueryBase {
 
       result
   }
+
+  /**
+   * Get invester action data
+   * SELECT
+       profile.si_userprofile_id, 
+       action.name,
+       activity.*
+    FROM crm_user_useractivity activity
+      INNER JOIN crm_user_crmuserprofile profile ON activity.actor_id = profile.id
+      INNER JOIN crm_user_eventaction action ON action.id = activity.event_action_id
+   */
+  def getInvestorActionData(
+    userActivityData: DataFrame,
+    userProfileData: DataFrame, 
+    eventActionData: DataFrame
+  ): DataFrame = {
+    val selectCols = Array(
+      "profile.si_userprofile_id AS `userId`",
+      "action.name AS `actionName`",
+      "activity.*" 
+    )
+
+    var result = userActivityData.as("activity")
+      .join(userProfileData.as("profile"), col("profile.id") === col("activity.actor_id"))
+      .join(eventActionData.as("action"), col("action.id") === col("activity.event_action_id"))
+      .selectExpr(selectCols: _*)
+
+    result
+  }
 }

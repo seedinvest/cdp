@@ -37,45 +37,38 @@ object InvestorActionProcessor
     val snapshotDatabase = options(SourceGlueDatabaseParam)
     val outputFileLocation = options(OutputLocationParam)
 
-    // val userProfileData = getDataFrameForGlueCatalog(snapshotDatabase, "public_crm_user_crmuserprofile")
-    // val userActivityData = getDataFrameForGlueCatalog(snapshotDatabase, "public_crm_user_useractivity")
-    // val userActionData = getDataFrameForGlueCatalog(snapshotDatabase, "public_crm_user_eventaction")
+    val userActivityData = getDataFrameForGlueCatalog(snapshotDatabase, "public_crm_user_useractivity")
+    val userProfileData = getDataFrameForGlueCatalog(snapshotDatabase, "public_crm_user_crmuserprofile")
+    val eventActionData = getDataFrameForGlueCatalog(snapshotDatabase, "public_crm_user_eventaction")
 
-    // val result = getInvestorData(sparkSession, authData, userProfileData, userIdentityData, investmentData)
+    /* Filter out the following events.
+      7:  DEAL_OUTREACH_RESPONSE_EVENT
+      8:  DEAL_OUTREACH_RESPONSE_FINAL_OUTCOME
+      10: USER_ADDED_TO_BASE_PIPELINE
+      12: USER_COMPLETED_APPLICATION
+      13: USER_COMPLETED_LIVE_EVENT_PREREGISTRATION
+      32: USER_STARTED_AUTOINVEST_MEMBERSHIP_ONBOARDING
+      34: USER_SUBSCRIBED_TO_LIVE_EVENT_COMPANY
+      35: USER_SUBSCRIBED_TO_LIVE_EVENT_NOTIFICATIONS
+      36: USER_TARGETED_IN_CAMPAIGN
+     */
+    val filteredEventActionData = eventActionData.filter(!(col("id") isin (7, 8, 10, 12, 13, 32, 34, 35, 36)))
 
-    // val timestampKey = LocalDateTime.now.format(DateTimeFormatter.ofPattern("YYYY/MM/dd_HHmmss"))
-    // val outputPath = s"$outputFileLocation/$timestampKey"
+    val result = getInvestorActionData(userActivityData, userProfileData, filteredEventActionData)
 
-    // result
-    //   .coalesce(1)
-    //   .write
-    //   .mode(SaveMode.Overwrite)
-    //   .option("header", value = true)
-    //   // Use escape to sets a single character used for escaping quotes inside an already quoted value.
-    //   .option("escape", "\"")
-    //   .csv(outputPath)
+    val timestampKey = LocalDateTime.now.format(DateTimeFormatter.ofPattern("YYYY/MM/dd_HHmmss"))
+    val outputPath = s"$outputFileLocation/$timestampKey"
+
+    result
+      .coalesce(1)
+      .write
+      .mode(SaveMode.Overwrite)
+      .option("header", value = true)
+      // Use escape to sets a single character used for escaping quotes inside an already quoted value.
+      .option("escape", "\"")
+      .csv(outputPath)
 
     Job.commit()
   }
 
-  def getInvestorData(sparkSession: SparkSession, authData: DataFrame, userProfileData: DataFrame, userIdentityData: DataFrame, investmentData: DataFrame): DataFrame = {
-
-    val selectCols = Array(
-      "userprofile_id",
-      "updated_date",
-      "total_invested"
-    )
-
-    var result = investmentData
-      .groupBy(col("userprofile_id"))
-      .agg(
-        max("modified_at").as("updated_date"),
-        sum("amount").as("total_invested")
-      )
-      .selectExpr(selectCols: _*)
-
-    result = result.filter(col("userprofile_id") === "1571")
-
-    result
-  }
 }
