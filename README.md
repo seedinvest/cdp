@@ -26,12 +26,9 @@ aws s3 cp ./src/main/scala/com/circle/data/jobs/InvestorActionProcessor.scala s3
 # Build and deploy lambda
 ## Development
 ```
-# founders
-cd lamba/founders
-./release-dev.sh
-
-# company
-cd lamba/company
+# deploy the lambda to import investor basic information
+cd lamba/basic
+npm install
 ./release-dev.sh
 ```
 
