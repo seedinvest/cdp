@@ -41,8 +41,15 @@ def handler(event, context):
     ):
         account_id = boto3.client("sts").get_caller_identity()["Account"]
         logger.info(message)
-        logger.info(message["Source ID"][19:29])
-        logger.info("dt-" + (message["Source ID"][19:29]).replace("--", "-"))
+
+        # prefix snapshot length
+        message_len = len(message["Source ID"])
+        # length of the rds:<database name>-
+        prefix_len = len(os.environ["DB_NAME"]) + 5
+        # length of message minus the date/time part and last -
+        postfix_len = len(message["Source ID"]) - 6
+        snap_date = (message["Source ID"][prefix_len:postfix_len])
+        logger.info(snap_date)
 
         s3 = boto3.resource('s3')
         bucket_name = os.environ['SNAPSHOT_BUCKET_NAME']
@@ -57,7 +64,7 @@ def handler(event, context):
 
         response = boto3.client("rds").start_export_task(
             ExportTaskIdentifier=(
-                "dt-" + os.environ["DB_NAME"] + "-" + (message["Source ID"][19:29]).replace("--", "-")
+                "dt-" + os.environ["DB_NAME"] + "-" + snap_date
             ),
             SourceArn=f"arn:aws:rds:{os.environ['AWS_REGION']}:{account_id}:{os.environ['DB_SNAPSHOT_TYPE']}:{message['Source ID']}",
             S3BucketName=os.environ["SNAPSHOT_BUCKET_NAME"],
