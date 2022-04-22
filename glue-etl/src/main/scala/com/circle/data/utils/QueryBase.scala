@@ -88,7 +88,7 @@ object QueryBase {
        rule.created_at,
        rule.modified_at,
        rule.active AS subscribed,
-       channel_contact_info AS email,
+       channel.contact_info AS email,
        preference.key,
        preference.label,
        preference.display_label
@@ -96,7 +96,7 @@ object QueryBase {
        INNER JOIN public_ponyexpress_preferences_contact_channel channel
          ON rule.contact_channel_id=channel.id
        INNER JOIN public_ponyexpress_preferences_preference preference
-         ON rule.preference_id=preference.id where active=true
+         ON rule.preference_id=preference.id
    */
   def getEmailPreferenceData(
     preferenceRuleData: DataFrame,
@@ -118,6 +118,7 @@ object QueryBase {
       .join(contactChannelData.as("channel"), col("channel.id") === col("rule.contact_channel_id"))
       .join(preferenceData.as("preference"), col("preference.id") === col("rule.preference_id"))
       .selectExpr(selectCols: _*)
+      // Make sure the email has right format
       .filter(col("email").rlike("""^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$"""))
 
     result
