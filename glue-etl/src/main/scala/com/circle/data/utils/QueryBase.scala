@@ -44,23 +44,23 @@ object QueryBase {
       .join(userIdentityData.as("ui"), col("ui.userprofile_id") === col("profile.entity_ptr_id"))
       .selectExpr(selectCols: _*)
 
-      if (recentOnly) {
-        val startTimestampLocal = new Timestamp(DateUtils.minusDays(new Date(), 2).getTime)
-        result = result.filter(col("auth.last_login").geq(startTimestampLocal))
-      }
+    if (recentOnly) {
+      val startTimestampLocal = new Timestamp(DateUtils.minusDays(new Date(), 2).getTime)
+      result = result.filter(col("auth.last_login").geq(startTimestampLocal))
+    }
 
-      result
+    result
   }
 
   /**
-   * Get invester action data
+   * Get investor action data
    * SELECT
        profile.si_userprofile_id, 
        action.name,
        activity.*
-    FROM crm_user_useractivity activity
-      INNER JOIN crm_user_crmuserprofile profile ON activity.actor_id = profile.id
-      INNER JOIN crm_user_eventaction action ON action.id = activity.event_action_id
+     FROM crm_user_useractivity activity
+       INNER JOIN crm_user_crmuserprofile profile ON activity.actor_id = profile.id
+       INNER JOIN crm_user_eventaction action ON action.id = activity.event_action_id
    */
   def getInvestorActionData(
     userActivityData: DataFrame,
@@ -73,10 +73,53 @@ object QueryBase {
       "activity.*" 
     )
 
-    var result = userActivityData.as("activity")
+    val result = userActivityData.as("activity")
       .join(userProfileData.as("profile"), col("profile.id") === col("activity.actor_id"))
       .join(eventActionData.as("action"), col("action.id") === col("activity.event_action_id"))
       .selectExpr(selectCols: _*)
+
+    result
+  }
+
+  /**
+   * Get SeedInvest investor email preference
+   * SELECT
+       rule.id,
+       rule.created_at,
+       rule.modified_at,
+       rule.active AS subscribed,
+       channel.contact_info AS email,
+       preference.key,
+       preference.label,
+       preference.display_label
+     FROM public_ponyexpress_preference_rule rule
+       INNER JOIN public_ponyexpress_preferences_contact_channel channel
+         ON rule.contact_channel_id=channel.id
+       INNER JOIN public_ponyexpress_preferences_preference preference
+         ON rule.preference_id=preference.id
+   */
+  def getEmailPreferenceData(
+    preferenceRuleData: DataFrame,
+    contactChannelData: DataFrame,
+    preferenceData: DataFrame
+  ): DataFrame = {
+    val selectCols = Array(
+      "rule.id",
+      "rule.created_at",
+      "rule.modified_at",
+      "rule.active AS `subscribed`",
+      "channel.contact_info AS `email`",
+      "preference.key",
+      "preference.label",
+      "preference.display_label"
+    )
+
+    val result = preferenceRuleData.as("rule")
+      .join(contactChannelData.as("channel"), col("channel.id") === col("rule.contact_channel_id"))
+      .join(preferenceData.as("preference"), col("preference.id") === col("rule.preference_id"))
+      .selectExpr(selectCols: _*)
+      // Make sure the email has right format
+      .filter(col("email").rlike("""^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$"""))
 
     result
   }
