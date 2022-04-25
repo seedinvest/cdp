@@ -27,8 +27,7 @@ class BasicUserInfoProcessorTest
   val profileSchema = List(
     StructField("entity_ptr_id", IntegerType, nullable = true),
     StructField("user_id", IntegerType, nullable = true),
-    StructField("email_confirmed", BooleanType, nullable = true),
-    StructField("date_joined", DateType, nullable = true)
+    StructField("email_confirmed", BooleanType, nullable = true)
   )
 
   val authSchema = List(
@@ -36,32 +35,31 @@ class BasicUserInfoProcessorTest
     StructField("first_name", StringType, nullable = true),
     StructField("last_name", StringType, nullable = true),
     StructField("email", StringType, nullable = true),
-    StructField("last_login", DateType, nullable = true)
+    StructField("last_login", DateType, nullable = true),
+    StructField("date_joined", DateType, nullable = true)
   )
 
-  val uiSchema = List(
+  val statusSchema = List(
     StructField("userprofile_id", IntegerType, nullable = true),
-    StructField("first_name", StringType, nullable = true),
-    StructField("last_name", StringType, nullable = true),
-    StructField("phone_number", StringType, nullable = true)
+    StructField("is_accredited", BooleanType, nullable = true)
   )
 
   val profileData = Seq(
-    Row(211921, 193663, true, null),
-    Row(469225, 412193, false, null),
-    Row(431253, 450024, true, null)
+    Row(211921, 193663, true),
+    Row(469225, 412193, false),
+    Row(431253, 450024, true)
   )
 
   val authData = Seq(
-    Row(193663, "Rodney", "Smith", "rodne@sor.com", null),
-    Row(412193, "Charles", "Yeo", "char@atotech.com", null),
-    Row(450024, "Nicholas", "Lu", "nick@ged.com", null)
+    Row(193663, "Rodney", "Smith", "rodne@sor.com", null, null),
+    Row(412193, "Charles", "Yeo", "char@atotech.com", null, null),
+    Row(450024, "Nicholas", "Lu", "nick@ged.com", null, null)
   )
   
-  val uiData = Seq(
-    Row(211921, null, null, null),
-    Row(469225, null, null, "1234567891"),
-    Row(431253, null, null, "2345670987")
+  val statusData = Seq(
+    Row(211921, true),
+    Row(469225, false),
+    Row(431253, true)
   )
 
   test("Test basic user info") {
@@ -76,12 +74,12 @@ class BasicUserInfoProcessorTest
       StructType(authSchema)
     )
 
-    val uiDF = spark.createDataFrame(
-      sparkContext.parallelize(uiData),
-      StructType(uiSchema)
+    val statusDF = spark.createDataFrame(
+      sparkContext.parallelize(statusData),
+      StructType(statusSchema)
     )
 
-    val results = getBasicUserData(authDF, profileDF, uiDF, false)
+    val results = getBasicUserData(authDF, profileDF, statusDF, false)
 
     assert(results.count() == 3)
 

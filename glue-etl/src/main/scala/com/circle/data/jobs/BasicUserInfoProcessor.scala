@@ -37,9 +37,9 @@ object BasicUserInfoProcessor
 
     val authData = getDataFrameForGlueCatalog(snapshotDatabase,  "public_auth_user")
     val userProfileData = getDataFrameForGlueCatalog(snapshotDatabase, "public_seedinvest_user_userprofile")
-    val userIdentityData = getDataFrameForGlueCatalog(snapshotDatabase, "public_seedinvest_user_identity")
+    val accreditationStatusData = getDataFrameForGlueCatalog(snapshotDatabase, "public_seedinvest_user_accreditation_status")
 
-    val result = getBasicUserData(authData, userProfileData, userIdentityData, false)
+    val result = getBasicUserData(authData, userProfileData, accreditationStatusData, false)
 
     val timestampKey = LocalDateTime.now.format(DateTimeFormatter.ofPattern("YYYY/MM/dd_HHmmss"))
     val outputPath = s"$outputFileLocation/$timestampKey"

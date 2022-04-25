@@ -30,9 +30,10 @@ const Analytics = require('analytics-node');
 const analytics = new Analytics(process.env.write_key);
 
 function transform(obj) {
-  if (obj.timestamp) {
-    obj.timestamp = new Date(obj.timestamp);
-  }
+  // Add timestamp, created_at and messgeId for identify events
+  obj.timestamp = new Date();
+  obj.messageId = `db-identify-${obj.userId}`;
+  obj.traits.created_at = obj.traits.date_joined;
   return obj;
 };
 
