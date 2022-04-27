@@ -55,12 +55,14 @@ object QueryBase {
   /**
    * Get investor action data
    * SELECT
-       profile.si_userprofile_id, 
-       action.name,
-       activity.*
-     FROM crm_user_useractivity activity
-       INNER JOIN crm_user_crmuserprofile profile ON activity.actor_id = profile.id
-       INNER JOIN crm_user_eventaction action ON action.id = activity.event_action_id
+       profile.si_userprofile_id AS userId, 
+       action.name AS event,
+       activity.event_object,
+       activity.event_details,
+       date_format(to_timestamp(activity.created_at), "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") AS timestamp
+     FROM public_crm_user_useractivity activity
+       INNER JOIN public_crm_user_crmuserprofile profile ON activity.actor_id = profile.id
+       INNER JOIN public_crm_user_eventaction action ON action.id = activity.event_action_id
    */
   def getInvestorActionData(
     userActivityData: DataFrame,
@@ -69,8 +71,10 @@ object QueryBase {
   ): DataFrame = {
     val selectCols = Array(
       "profile.si_userprofile_id AS `userId`",
-      "action.name AS `actionName`",
-      "activity.*" 
+      "action.name AS `event`",
+      "activity.event_object",
+      "activity.event_details",
+      """date_format(to_timestamp(activity.created_at), "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") AS `timestamp`"""
     )
 
     val result = userActivityData.as("activity")
