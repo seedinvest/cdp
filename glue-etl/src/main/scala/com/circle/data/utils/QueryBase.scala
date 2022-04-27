@@ -28,7 +28,7 @@ object QueryBase {
 
   def getBasicUserData(authData: DataFrame, userProfileData: DataFrame, accreditationStatus: DataFrame, recentOnly: Boolean = false): DataFrame = {
     val selectCols = Array(
-      "profile.user_id AS `userId`",
+      "profile.entity_ptr_id AS `userId`",
       "auth.first_name AS `traits.first_name`",
       "auth.last_name AS `traits.last_name`",
       "auth.email AS `traits.email`",
