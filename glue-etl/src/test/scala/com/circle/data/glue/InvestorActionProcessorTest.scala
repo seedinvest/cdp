@@ -35,7 +35,9 @@ class InvestorActionProcessorTest
     StructField("id", IntegerType, nullable = true),
     StructField("event_action_id", IntegerType, nullable = true),
     StructField("actor_id", IntegerType, nullable = true),
-    StructField("last_activity_time", DateType, nullable = true)
+    StructField("created_at", StringType, nullable = true),
+    StructField("event_object", StringType, nullable = true),
+    StructField("event_details", StringType, nullable = true)
   )
 
   val actionSchema = List(
@@ -51,10 +53,10 @@ class InvestorActionProcessorTest
   )
 
   val activityData = Seq(
-    Row(1, 19, 193663, null),
-    Row(2, 31, 412193, null),
-    Row(3, 22, 450024, null),
-    Row(3, 22, 45002, null)
+    Row(1, 19, 193663, "2022-04-08 20:33:04.338868+00", null, null),
+    Row(2, 31, 412193, null, null, null),
+    Row(3, 22, 450024, null, null, null),
+    Row(3, 22, 45002, null, null, null)
   )
   
   val actionData = Seq(

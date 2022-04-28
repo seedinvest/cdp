@@ -15,7 +15,7 @@ import java.util.Date
 import java.time.format.DateTimeFormatter
 
 /**
- * Processor for getting SeedInvest user who signed up.
+ * Processor for getting SeedInvest user actions
  */
 object InvestorActionProcessor
   extends GlueJob

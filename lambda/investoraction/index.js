@@ -30,11 +30,30 @@ const Analytics = require('analytics-node');
 const analytics = new Analytics(process.env.write_key);
 
 function transform(obj) {
-  if (obj.timestamp) {
-    obj.timestamp = new Date(obj.timestamp);
+  obj.properties = {};
+  obj.event_object = JSON.parse(obj.event_object);
+  obj.event_details = JSON.parse(obj.event_details);
+  
+  // parse the deal object 
+  if (obj.event_object.type && obj.event_object.type === 'deal') {
+    obj.properties.deal_id = obj.event_object.id;
+    obj.properties.deal_name = obj.event_object.name;
+    obj.properties.company_name = obj.event_object.company_name;
+    obj.properties.offering_type = obj.event_object.offering_type;
   }
+  
+  // parse the amount
+  if (obj.event_details.amount) {
+    obj.properties.amount = obj.event_details.amount;
+  }
+  
+  const ts = new Date(obj.timestamp);
 
-  obj.event = obj.actionName;
+  obj.messageId = `db-track-${obj.userId}-${ts.getTime()}`;
+  obj.timestamp = ts;
+  
+  delete obj.event_details;
+  delete obj.event_object;
   return obj;
 };
 
