@@ -31,7 +31,7 @@ const analytics = new Analytics(process.env.write_key);
 
 function transform(obj) {
   // Add timestamp, created_at and messgeId for identify events
-  obj.timestamp = new Date();
+  obj.timestamp = new Date(obj.traits.date_joined);
   obj.messageId = `db-identify-${obj.userId}`;
   obj.traits.created_at = obj.traits.date_joined;
   return obj;
