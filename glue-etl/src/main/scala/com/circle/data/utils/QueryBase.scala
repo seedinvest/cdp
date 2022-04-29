@@ -1,7 +1,7 @@
 package com.circle.data.utils
 
 import org.apache.spark.sql.{DataFrame, SparkSession}
-import org.apache.spark.sql.functions.col
+import org.apache.spark.sql.functions._
 
 import java.sql.Timestamp
 import java.util.Date
@@ -86,43 +86,58 @@ object QueryBase {
 
   /**
    * Get SeedInvest investor email preference
+   * We have to do it complex query since the ponyexpress tables don't have the userId.
+   * We can only join on the email address.
    * SELECT
+       profile.entity_ptr_id AS userId
        rule.id,
        rule.created_at,
        rule.modified_at,
        rule.active AS subscribed,
        channel.contact_info AS email,
-       preference.key,
-       preference.label,
-       preference.display_label
+       preference.key
      FROM public_ponyexpress_preference_rule rule
        INNER JOIN public_ponyexpress_preferences_contact_channel channel
          ON rule.contact_channel_id=channel.id
        INNER JOIN public_ponyexpress_preferences_preference preference
          ON rule.preference_id=preference.id
+       INNER JOIN public_auth
+         ON channel.contact_info = auth.email
+       INNER JOIN public_seedinvest_user_userprofile profile
+         ON profile.user_id = auth.id
    */
   def getEmailPreferenceData(
+    authData: DataFrame,
+    profileData: DataFrame,
     preferenceRuleData: DataFrame,
     contactChannelData: DataFrame,
     preferenceData: DataFrame
   ): DataFrame = {
     val selectCols = Array(
+      "profile.entity_ptr_id AS `userId`",
       "rule.id",
       "rule.created_at",
       "rule.modified_at",
       "rule.active AS `subscribed`",
       "channel.contact_info AS `email`",
-      "preference.key",
-      "preference.label",
-      "preference.display_label"
+      "preference.key"
     )
 
     val result = preferenceRuleData.as("rule")
       .join(contactChannelData.as("channel"), col("channel.id") === col("rule.contact_channel_id"))
       .join(preferenceData.as("preference"), col("preference.id") === col("rule.preference_id"))
+      .join(authData.as("auth"), col("auth.email") === col("channel.contact_info"))
+      .join(profileData.as("profile"), col("profile.user_id") === col("auth.id"))
+      .filter(col("active") === "true")
       .selectExpr(selectCols: _*)
       // Make sure the email has right format
       .filter(col("email").rlike("""^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$"""))
+      // Collect all the subscriptiona for a user
+      .groupBy("userId", "email")
+      .agg(
+        max("modified_at").as("timestamp"),
+        concat_ws(" ", collect_set("key")).as("subscribed")
+      )
 
     result
   }

@@ -54,6 +54,16 @@ trait DataLoader extends Logging {
     getDynamicFrameForGlueCatalog(database, table, transformationContext).toDF()
   }
 
+  def getDataFrameForGlueCatalog(databaseTable: String)
+                                (implicit context: GlueContext): DataFrame = {
+    databaseTable.split("""\.""") match {
+      case Array(database, table) =>
+        getDynamicFrameForGlueCatalog(database, table).toDF()
+      case _ =>
+        throw new IllegalArgumentException(s"can't parse table name $databaseTable")
+    }
+  }
+
   def getDynamicFrameForGlueCatalog(database: String, table: String, transformationContext: String = "loading source data")
                                    (implicit context: GlueContext): DynamicFrame = {
     context.getCatalogSource(

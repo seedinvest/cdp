@@ -29,17 +29,24 @@ object EmailPreferenceProcessor
     logConfiguration()
 
     val options = initializeJob(context, args,
-      Array(SourceGlueDatabaseParam, OutputLocationParam)
+      Array(OutputLocationParam)
     )
 
-    val snapshotDatabase = options(SourceGlueDatabaseParam)
     val outputFileLocation = options(OutputLocationParam)
 
-    val preferenceRuleData = getDataFrameForGlueCatalog(snapshotDatabase, "public_ponyexpress_preference_rule")
-    val contactChannelData = getDataFrameForGlueCatalog(snapshotDatabase, "public_ponyexpress_preferences_contact_channel")
-    val preferenceData = getDataFrameForGlueCatalog(snapshotDatabase, "public_ponyexpress_preferences_preference")
+    val authData = getDataFrameForGlueCatalog(databaseTable = "siservices_prod_db.public_auth_user")
+    val profileData = getDataFrameForGlueCatalog(databaseTable = "siservices_prod_db.public_seedinvest_user_userprofile")
+    val preferenceRuleData = getDataFrameForGlueCatalog(databaseTable = "investorcrm_db.public_ponyexpress_preference_rule")
+    val contactChannelData = getDataFrameForGlueCatalog(databaseTable = "investorcrm_db.public_ponyexpress_preferences_contact_channel")
+    val preferenceData = getDataFrameForGlueCatalog(databaseTable = "investorcrm_db.public_ponyexpress_preferences_preference")
 
-    val result = getEmailPreferenceData(preferenceRuleData, contactChannelData, preferenceData)
+    val result = getEmailPreferenceData(
+      authData = authData,
+      profileData = profileData,
+      preferenceRuleData = preferenceRuleData,
+      contactChannelData = contactChannelData,
+      preferenceData = preferenceData
+    )
 
     val timestampKey = LocalDateTime.now.format(DateTimeFormatter.ofPattern("YYYY/MM/dd_HHmmss"))
     val outputPath = s"$outputFileLocation/$timestampKey"
