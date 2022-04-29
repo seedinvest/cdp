@@ -34,11 +34,11 @@ object EmailPreferenceProcessor
 
     val outputFileLocation = options(OutputLocationParam)
 
-    val authData = getDataFrameForGlueCatalog(databaseTable = "siservices_prod_db.public_auth_user")
-    val profileData = getDataFrameForGlueCatalog(databaseTable = "siservices_prod_db.public_seedinvest_user_userprofile")
-    val preferenceRuleData = getDataFrameForGlueCatalog(databaseTable = "investorcrm_db.public_ponyexpress_preference_rule")
-    val contactChannelData = getDataFrameForGlueCatalog(databaseTable = "investorcrm_db.public_ponyexpress_preferences_contact_channel")
-    val preferenceData = getDataFrameForGlueCatalog(databaseTable = "investorcrm_db.public_ponyexpress_preferences_preference")
+    val authData = getDataFrameForGlueCatalog(databaseTableName = "siservices_prod_db.public_auth_user")
+    val profileData = getDataFrameForGlueCatalog(databaseTableName = "siservices_prod_db.public_seedinvest_user_userprofile")
+    val preferenceRuleData = getDataFrameForGlueCatalog(databaseTableName = "investorcrm_db.public_ponyexpress_preference_rule")
+    val contactChannelData = getDataFrameForGlueCatalog(databaseTableName = "investorcrm_db.public_ponyexpress_preferences_contact_channel")
+    val preferenceData = getDataFrameForGlueCatalog(databaseTableName = "investorcrm_db.public_ponyexpress_preferences_preference")
 
     val result = getEmailPreferenceData(
       authData = authData,

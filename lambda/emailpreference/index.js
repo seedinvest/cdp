@@ -14,13 +14,10 @@
 
 /**
  * A lambda for to sync CSV files on S3 to Segment.
- *
- * See design doc:
- * https://docs.google.com/document/d/1yBsv0ECwitoieDWH8aB5Pt1mc8G6-SPJuok3s_W_Ox8/
+ * Load the email preferences and send identify events to Segment.
  */
 
 // dependencies
-// const async = require('async');
 const AWS = require('aws-sdk');
 const csv = require('csvtojson');
 const s3 = new AWS.S3();
