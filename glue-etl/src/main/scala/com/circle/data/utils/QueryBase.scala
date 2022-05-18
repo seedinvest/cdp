@@ -131,7 +131,7 @@ object QueryBase {
       .filter(col("active") === "true")
       .selectExpr(selectCols: _*)
       // Make sure the email has right format
-      .filter(col("email").rlike("""^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$"""))
+      .filter(col("email").rlike("""^(\S+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]+)$"""))
       // Collect all the subscriptiona for a user
       .groupBy("userId", "email")
       .agg(
