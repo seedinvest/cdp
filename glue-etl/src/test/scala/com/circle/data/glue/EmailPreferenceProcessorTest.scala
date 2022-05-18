@@ -24,10 +24,25 @@ import utils.ETLSuiteBase
 class EmailPreferenceProcessorTest
   extends ETLSuiteBase {
 
+  val authSchema = List(
+    StructField("id", IntegerType, nullable = true),
+    StructField("first_name", StringType, nullable = true),
+    StructField("last_name", StringType, nullable = true),
+    StructField("email", StringType, nullable = true),
+    StructField("last_login", DateType, nullable = true),
+    StructField("date_joined", DateType, nullable = true)
+  )
+
+  val profileSchema = List(
+    StructField("entity_ptr_id", IntegerType, nullable = true),
+    StructField("user_id", IntegerType, nullable = true),
+    StructField("email_confirmed", BooleanType, nullable = true)
+  )
+
   val ruleSchema = List(
     StructField("id", IntegerType, nullable = true),
-    StructField("created_at", DateType, nullable = true),
-    StructField("modified_at", DateType, nullable = true),
+    StructField("created_at", StringType, nullable = true),
+    StructField("modified_at", StringType, nullable = true),
     StructField("active", BooleanType, nullable = true),
     StructField("contact_channel_id", IntegerType, nullable = true),
     StructField("preference_id", IntegerType, nullable = true)
@@ -46,26 +61,55 @@ class EmailPreferenceProcessorTest
     StructField("display_label", StringType, nullable = true)
   )
 
+  val profileData = Seq(
+    Row(211921, 193663, true),
+    Row(469225, 412193, false),
+    Row(431253, 450024, true),
+    Row(431254, 450025, true),
+    Row(431255, 450026, true)
+  )
+
+  val authData = Seq(
+    Row(193663, "Rodney", "Smith", "rodne@sor.com", null, null),
+    Row(412193, "Charles", "Yeo", "char@atotech.com.uk", null, null),
+    Row(450024, "Nicholas", "Lu", "nick@ged.com", null, null),
+    Row(450025, "Nicholas", "Lu", "foobar@", null, null),
+    Row(450026, "Jay", "Han", "foobar", null, null)
+  )
+
   val ruleData = Seq(
-    Row(1, null, null, true, 11, 21),
-    Row(2, null, null, false, 12, 22),
+    Row(1, null, "2022-04-08T20:33:04.338Z", true, 11, 21),
+    Row(2, null, "2022-04-18T20:33:04.338Z", true, 12, 22),
     Row(3, null, null, true, 13, 22),
-    Row(4, null, null, false, 14, 22)
+    Row(4, null, null, false, 14, 22),
+    Row(5, null, "2022-04-18T20:33:04.338Z", true, 11, 22),
+    Row(5, null, "2022-04-18T20:33:04.338Z", false, 11, 23)
   )
 
   val channelData = Seq(
-    Row(11, "marketing", "foo@bar.com"),
-    Row(12, "marketing", "foo1@bar.bar.com"),
+    Row(11, "marketing", "rodne@sor.com"),
+    Row(12, "marketing", "char@atotech.com.uk"),
     Row(13, "marketing", "foobar@"),
     Row(14, "marketing", "foobar")
   )
   
   val preferenceData = Seq(
     Row(21, "weekly_news_letter", "weekly_news_letter", "Weekly News Letter"),
-    Row(22, "monthly_news_letter", "monthly_news_letter", "Monthly News Letter")
+    Row(22, "monthly_news_letter", "monthly_news_letter", "Monthly News Letter"),
+    Row(23, "corp1", "corp1", "Corp1")
   )
 
   test("Test email preference") {
+
+    val authDF = spark.createDataFrame(
+      sparkContext.parallelize(authData),
+      StructType(authSchema)
+    )
+
+    val profileDF = spark.createDataFrame(
+      sparkContext.parallelize(profileData),
+      StructType(profileSchema)
+    )
 
     val ruleDF = spark.createDataFrame(
       sparkContext.parallelize(ruleData),
@@ -82,7 +126,7 @@ class EmailPreferenceProcessorTest
       StructType(preferenceSchema)
     )
 
-    val results = getEmailPreferenceData(ruleDF, channelDF, preferenceDF)
+    val results = getEmailPreferenceData(authDF, profileDF, ruleDF, channelDF, preferenceDF)
 
     assert(results.count() == 2)
 
