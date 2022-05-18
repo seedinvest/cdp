@@ -253,5 +253,8 @@ export class RdsSnapshotExportPipelineStack extends cdk.Stack {
         deleteBehavior: 'DELETE_FROM_DATABASE'
       }
     });
+
+    // TODO: I think this CDK is missing the lambda function siservices-prod-db-rds-snapshot-crawler
+    // used to move s3 today -> latest directory
   }
 }

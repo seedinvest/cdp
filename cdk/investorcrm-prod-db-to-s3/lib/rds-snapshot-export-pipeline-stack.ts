@@ -10,6 +10,7 @@ import {BlockPublicAccess, Bucket} from "@aws-cdk/aws-s3";
 import {Topic} from "@aws-cdk/aws-sns";
 import {Rule, Schedule} from "@aws-cdk/aws-events";
 import {LambdaFunction} from "@aws-cdk/aws-events-targets";
+import * as iam from '@aws-cdk/aws-iam';
 
 export enum RdsEventId {
   /**
@@ -258,5 +259,27 @@ export class RdsSnapshotExportPipelineStack extends cdk.Stack {
         deleteBehavior: 'DELETE_FROM_DATABASE'
       }
     });
+
+
+    const importedRole = iam.Role.fromRoleArn(
+        this,
+        'imported-role',
+        `arn:aws:iam::301027959319:role/investorcrm-db-rds-snapshot-crawler-role-v8jdpsqd`,
+        {mutable: false},
+      );
+
+    // Function used to move todays export to a latest folder (for glue to crawl)
+    const crawlerLambda = new Function(this, "LambdaStartCrawler", {
+        functionName: props.dbName + "-rds-snapshot-crawler",
+        runtime: Runtime.PYTHON_3_8,
+        handler: "main.handler",
+        code: Code.fromAsset(path.join(__dirname, "/../assets/crawler/")),
+        environment: {
+          GLUE_CRAWLER_NAME: props.dbName + "-rds-snapshot-crawler",
+          S3_BUCKET_NAME: props.dbName + "-export",
+        },
+        timeout: cdk.Duration.minutes(15),
+        role: importedRole,
+      });
   }
 }
