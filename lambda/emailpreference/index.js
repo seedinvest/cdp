@@ -27,9 +27,9 @@ const Analytics = require('analytics-node');
 const analytics = new Analytics(process.env.write_key);
 
 function transform(obj) {
-  
+
   obj.messageId = `db-identify-email-${obj.userId}`;
-  
+
   const ts = new Date(obj.timestamp);
   obj.timestamp = ts;
 
@@ -55,10 +55,18 @@ exports.handler = function (event, context, callback) {
   csv()
     .fromStream(s3.getObject(params).createReadStream())
     .subscribe((json) => {
-      const event = transform(json);
-      console.log(event);
-      analytics.identify(event);
+      console.log(transform(json));
+      // analytics.identify(transform(json));
     }, (err) => {
       console.error(err);
-    }, async () => {});
+    }, async () => {
+      // await analytics.flush((err, batch) => {
+      //   if (!err) {
+      //     console.log(`Successfully downloaded ${srcBucket}/${srcFileName} and uploaded to Segment!`);
+      //     callback(null, "Success!");
+      //   } else {
+      //     console.error(`Unable to download ${srcBucket}/${srcFileName} and uploaded to Segment due to ${err}`);
+      //   }
+      // });
+    });
 };
