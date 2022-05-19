@@ -17,13 +17,17 @@ Move latest RDS snapshot to latest folder in S3 and start glue crawler job.
 def handler(event, context):
     date = datetime.today().strftime('%Y-%m-%d')
     logger.info(f'Date: {date}')
-    
+
     bucket_name = os.environ['S3_BUCKET_NAME']
-    old_folder = f'siservices-prod-db/dt-{date}/'
+    old_folder = f'siservices-prod-db/dt-siservices-prod-db-{date}/'
     new_folder = 'latest/'
+
+    print (old_folder)
 
     s3 = boto3.resource('s3')
     bucket = s3.Bucket(bucket_name)
+
+    print (bucket)
 
     logger.info('Purge latest folder!')
     bucket.objects.filter(Prefix=new_folder).delete()
@@ -33,7 +37,7 @@ def handler(event, context):
         old_source = {'Bucket': bucket_name, 'Key': obj.key}
         new_key = obj.key.replace(old_folder, new_folder, 1)
         s3.Object(bucket_name, new_key).copy_from(CopySource=old_source)
-    
+
     logger.info('Start Glue Crawler job!')
     glue_client = boto3.client('glue', region_name='us-east-1')
     response = glue_client.start_crawler(Name=os.environ['GLUE_CRAWLER_NAME'])

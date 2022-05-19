@@ -19,17 +19,22 @@ def handler(event, context):
     logger.info(f'Date: {date}')
 
     bucket_name = os.environ['S3_BUCKET_NAME']
-    old_folder = f'investorcrm-db/dt-{date}/'
+    old_folder = f'investorcrm-db/dt-investorcrm-db-{date}/'
     new_folder = 'latest/'
+
+    print (old_folder)
 
     s3 = boto3.resource('s3')
     bucket = s3.Bucket(bucket_name)
+
+    print (bucket)
 
     logger.info('Purge latest folder!')
     bucket.objects.filter(Prefix=new_folder).delete()
 
     logger.info('Copy RDS snapshot data over to latest folder!')
     for obj in bucket.objects.filter(Prefix=old_folder):
+        print (obj.key)
         old_source = {'Bucket': bucket_name, 'Key': obj.key}
         new_key = obj.key.replace(old_folder, new_folder, 1)
         s3.Object(bucket_name, new_key).copy_from(CopySource=old_source)
