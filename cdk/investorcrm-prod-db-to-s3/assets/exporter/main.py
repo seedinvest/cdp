@@ -32,9 +32,6 @@ def handler(event, context):
 
     message = json.loads(event["Records"][0]["Sns"]["Message"])
 
-    logger.info(message["Event ID"])
-    logger.info(message["Source ID"])
-
     if message["Event ID"].endswith(os.environ["RDS_EVENT_ID"]) and re.match(
         "^rds:" + os.environ["DB_NAME"] + "-\d{4}-\d{2}-\d{2}-\d{2}-\d{2}$",
         message["Source ID"],
