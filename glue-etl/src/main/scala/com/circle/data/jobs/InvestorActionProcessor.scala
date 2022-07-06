@@ -54,7 +54,8 @@ object InvestorActionProcessor
      */
     val filteredEventActionData = eventActionData.filter(!(col("id") isin (7, 8, 10, 12, 13, 32, 34, 35, 36)))
 
-    val result = getInvestorActionData(userActivityData, userProfileData, filteredEventActionData)
+    val filteredProfileData = userProfileData.filter(col("si_userprofile_id") > 650000)
+    val result = getInvestorActionData(userActivityData, filteredProfileData, filteredEventActionData)
 
     val timestampKey = LocalDateTime.now.format(DateTimeFormatter.ofPattern("YYYY/MM/dd_HHmmss"))
     val outputPath = s"$outputFileLocation/$timestampKey"
